@@ -1,10 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components"
 import gameContext from "../../gameContext"
 import socketService from "../../services/socketService"
 import gameService from "../../services/gameService"
 
-interface IJoinRoomProps {}
+interface IJoinRoomProps { }
 
 const JoinRoomContainer = styled.div`
     width: 100%;
@@ -48,6 +48,7 @@ export function JoinRoom(props: IJoinRoomProps) {
     const [roomName, setRoomName] = useState("")
     const [isJoining, setJoining] = useState(false)
     const { inRoom, setInRoom } = useContext(gameContext)
+    const { isRoomReady, setRoomReady } = useContext(gameContext)
 
     const handleRoomNameChange = (e: React.ChangeEvent<any>) => {
         const value = e.target.value
@@ -57,6 +58,9 @@ export function JoinRoom(props: IJoinRoomProps) {
     const joinRoom = async (e: React.FormEvent) => {
         e.preventDefault();
         const socket = socketService.socket;
+
+        handlePlayerJoiningRoom() // empieza a escuchar el evento room_ready
+
         if (!roomName || roomName.trim() === "" || !socket) return;
 
         setJoining(true)
@@ -70,6 +74,15 @@ export function JoinRoom(props: IJoinRoomProps) {
         if (joined) setInRoom(true)
 
         setJoining(false)
+    }
+
+    const handlePlayerJoiningRoom = () => {
+        const socket = socketService.socket
+        if (!socket) return;
+        gameService.onPlayerJoining(socket, (roomIsReady) => {
+            setRoomReady(roomIsReady)
+        })
+
     }
 
     return (

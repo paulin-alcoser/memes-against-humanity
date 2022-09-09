@@ -6,6 +6,7 @@ import socketService from './services/socketService';
 import { JoinRoom } from './components/joinRoom';
 import { Game } from './components/game';
 import GameContext, { IGameContextProps } from './gameContext';
+import gameService from './services/gameService';
 
 const AppContainer = styled.div`
   width: 100%;
@@ -32,12 +33,15 @@ const MainContainer = styled.div`
 function App() {
   const [inRoom, setInRoom] = useState(false);
   const [isRoomReady, setRoomReady] = useState(false)
+
   const connectSocket = async () => {
     const socket = await socketService.connect("http://localhost:9000")
       .catch((err) => {
         console.log("Error: ", err)
       })
   }
+
+  
 
   useEffect(() => {
     connectSocket()

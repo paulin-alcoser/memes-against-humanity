@@ -8,6 +8,7 @@ class SocketService {
             this.socket = io(url);
             if(!this.socket)
                 return rj()
+            
             this.socket.on("connect", () => {
                 rs(this.socket as Socket); 
             });
